@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 50 1325 300" width="1325" height="300" fill="none">
+  <!-- drop shadow (dark, offset) -->
+  <g fill="#221f1c" transform="translate(15,20)">
+    <path fill-rule="evenodd" d="M60,70 H240 V310 H60 Z M114,124 H186 V163 H114 Z M114,217 H186 V256 H114 Z"/>
+    <path fill-rule="evenodd" d="M258,70 H438 V310 H258 Z M312,124 H384 V256 H312 Z"/>
+    <path d="M456,70 H526 L636,310 H566 Z"/>
+    <path d="M566,70 H636 L526,310 H456 Z"/>
+    <path d="M654,176 H744 V224 H654 Z"/>
+    <path d="M762,70 H928 V124 H816 V163 H890 V217 H816 V310 H762 Z"/>
+    <path d="M946,70 H1000 V256 H1072 V70 H1126 V310 H946 Z"/>
+    <path d="M1144,70 H1198 L1270,228 V70 H1324 V310 H1270 L1198,152 V310 H1144 Z"/>
+  </g>
+  <!-- main letters with thick dark outline -->
+  <g stroke="#221f1c" stroke-width="24" stroke-linejoin="round" paint-order="stroke">
+    <g fill="#34c45f">
+      <path fill-rule="evenodd" d="M60,70 H240 V310 H60 Z M114,124 H186 V163 H114 Z M114,217 H186 V256 H114 Z"/>
+      <path fill-rule="evenodd" d="M258,70 H438 V310 H258 Z M312,124 H384 V256 H312 Z"/>
+      <path d="M456,70 H526 L636,310 H566 Z"/>
+      <path d="M566,70 H636 L526,310 H456 Z"/>
+      <path d="M654,176 H744 V224 H654 Z"/>
+    </g>
+    <g fill="#f7941d">
+      <path d="M762,70 H928 V124 H816 V163 H890 V217 H816 V310 H762 Z"/>
+      <path d="M946,70 H1000 V256 H1072 V70 H1126 V310 H946 Z"/>
+      <path d="M1144,70 H1198 L1270,228 V70 H1324 V310 H1270 L1198,152 V310 H1144 Z"/>
+    </g>
+  </g>
+</svg>
