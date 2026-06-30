@@ -303,7 +303,7 @@ const COINS = [
   {name:"Pepe",        ticker:"PEPE",   img:"PEPE.png",       persona:"the OG. Rare, unbothered, perpetually feeling good, man."},
   {name:"Andy",        ticker:"ANDY",   img:"ANDY.png",       persona:"Pepe's best friend — loyal, a little unhinged, always down."},
   {name:"Landwolf",    ticker:"WOLF",   img:"LANDWOLF.png",   persona:"the party animal who never reads the room and never has to."},
-  {name:"hpos10I",     ticker:"HPOS",   img:"HPOS10I.png",    persona:"a glitch in the matrix that somehow keeps printing."},
+  {name:"hpos10I",     ticker:"BITCOIN", img:"HPOS10I.png",   persona:"a glitch in the matrix that somehow keeps printing."},
   {name:"Neiro",       ticker:"NEIRO",  img:"NEIRO.png",      persona:"the new dog on the block with something to prove."},
   {name:"Apu",         ticker:"APU",    img:"APU.png",        persona:"the little guy with the biggest heart. Apustaja forever."},
   {name:"Mog",         ticker:"MOG",    img:"MOG.png",        persona:"effortlessly mogging everyone. You don't try, you just win."},
@@ -316,7 +316,7 @@ const COINS = [
   {name:"Floki",       ticker:"FLOKI",  img:"FLOKI.png",      persona:"Viking dog energy. To Valhalla, with a war chest."},
   {name:"Shiba Inu",   ticker:"SHIB",   img:"SHIB.png",       persona:"the people's army. A million holders can't be wrong."},
   {name:"Turbo",       ticker:"TURBO",  img:"TURBO.png",      persona:"AI-born, fully send. You move fast and break charts."},
-  {name:"Fartcoin",    ticker:"FART",   img:"cg_fartcoin.png",persona:"unserious on purpose, somehow still up. Let it rip."},
+  {name:"Fartcoin",    ticker:"FARTCOIN",img:"cg_fartcoin.png",persona:"unserious on purpose, somehow still up. Let it rip."},
   {name:"Troll",       ticker:"TROLL",  img:"cg_troll.png",   persona:"chaos incarnate. You're here for the bit, always."},
   {name:"Useless",     ticker:"USELESS",img:"cg_useless.png", persona:"proudly does nothing and outperforms everything anyway."},
   {name:"Popcat",      ticker:"POPCAT", img:"cg_popcat.png",  persona:"pop. pop. pop. Simple pleasures, infinite clicks."},
@@ -325,7 +325,7 @@ const COINS = [
   {name:"Buttcoin",    ticker:"BUTT",   img:"cg_buttcoin.png",persona:"the punchline that refuses to die. Bottom signal, top energy."},
   {name:"Joe",         ticker:"JOE",    img:"cg_joe.png",     persona:"just a regular guy who happened to 100x. Could be you."},
   {name:"Wojak",       ticker:"WOJAK",  img:"cg_wojak.png",   persona:"feels everything, sells nothing. Pain is temporary, gains forever."},
-  {name:"Chillhouse",  ticker:"CHILL",  img:"cg_chillhouse.png",persona:"lo-fi beats to hold bags to. Unbothered. Moisturized."},
+  {name:"Chillhouse",  ticker:"CHILLHOUSE",img:"cg_chillhouse.png",persona:"lo-fi beats to hold bags to. Unbothered. Moisturized."},
   {name:"DOG",         ticker:"DOG",    img:"cg_dog.png",     persona:"the Bitcoin dog. Going to the moon, on Runes."},
   {name:"PURR",        ticker:"PURR",   img:"cg_purr.png",    persona:"the Hyperliquid cat. Sleek, fast, quietly dangerous."},
   {name:"PNUT",        ticker:"PNUT",   img:"cg_pnut.png",    persona:"the squirrel that became a movement. Tiny but mighty."},
@@ -492,12 +492,12 @@ async function exportCard(){
     x.fillStyle='#F7931A'; x.fillText("FUN",W/2+52,64);
   }
 
-  // I AM + name
-  x.textAlign='center'; x.fillStyle='#1a1a1a'; x.font="34px Bungee";
-  x.fillText("🏆 I AM 🏆",W/2,172);
+  // headline + name
+  x.textAlign='center'; x.fillStyle='#1a1a1a'; x.font="30px Bungee";
+  x.fillText("MY FAVORITE MEMECOIN IS",W/2,150);
   x.font="84px Bungee";
-  x.fillStyle='#FFD400'; x.fillText(w.name.toUpperCase(),W/2+4,256);
-  x.fillStyle='#1a1a1a'; x.fillText(w.name.toUpperCase(),W/2,252);
+  x.fillStyle='#FFD400'; x.fillText(w.name.toUpperCase(),W/2+4,254);
+  x.fillStyle='#1a1a1a'; x.fillText(w.name.toUpperCase(),W/2,250);
 
   // winner image (box image as-is, or framed PFP, or placeholder)
   const boxImg = await loadImg(w.box);
@@ -546,7 +546,7 @@ async function exportCard(){
 
   // footer CTA
   const fy=boxY+boxH+54;
-  x.font="26px Bungee"; x.fillStyle='#1a1a1a'; x.fillText("WHICH MEMECOIN ARE YOU?",W/2,fy);
+  x.font="26px Bungee"; x.fillStyle='#1a1a1a'; x.fillText("WHAT'S YOUR MEMECOIN?",W/2,fy);
   x.font="24px Bungee"; x.fillStyle='#F7931A'; x.fillText("📦 box.fun",W/2,fy+34);
 
   cv.toBlob(b=>{
