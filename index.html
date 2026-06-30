@@ -263,7 +263,7 @@
         <div class="vs">VS</div>
         <div class="slot" id="slotB"></div>
       </div>
-      <p class="pick-hint">👉 TAP THE ONE THAT'S MORE <b>YOU</b> 👉</p>
+      <p class="pick-hint">👈 TAP THE ONE THAT'S MORE <b>YOU</b> 👉</p>
     </div>
   </section>
 
@@ -470,8 +470,10 @@ function loadImg(src){
 async function exportCard(){
   const w=window.__winner; if(!w) return;
   await (document.fonts?document.fonts.ready:Promise.resolve());
-  const W=1200,H=675, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
-  const x=cv.getContext('2d');
+  const W=1200,H=675, SCALE=2, cv=document.createElement('canvas');
+  cv.width=W*SCALE; cv.height=H*SCALE;
+  const x=cv.getContext('2d'); x.scale(SCALE,SCALE);
+  x.imageSmoothingEnabled=true; x.imageSmoothingQuality='high';
   const accent=colorFor(w.name);
 
   // background + frame
@@ -514,8 +516,8 @@ async function exportCard(){
   // logo
   const logo=await loadImg('logo.png') || await loadImg('logo.svg');
   if(logo){
-    const lh=52, lw=logo.width*(lh/logo.height);
-    x.drawImage(logo,rx,66,lw,lh);
+    const lh=72, lw=logo.width*(lh/logo.height);
+    x.drawImage(logo,rx,56,lw,lh);
   }else{
     x.textAlign='left'; x.font="42px Bungee";
     x.fillStyle='#2DC44F'; x.fillText("BOX-",rx,108);
@@ -541,10 +543,9 @@ async function exportCard(){
   roundRect(x,qbX,qbY,qbW,qbH,10); x.fill(); x.stroke();
   x.fillStyle='#1a1a1a'; x.textAlign='left';
   lines.forEach((l,i)=>x.fillText(l,qbX+padX,qbY+padY+lh2*0.7+i*lh2));
-  // footer CTA
-  const fY=H-92;
-  x.font="28px Bungee"; x.fillStyle='#1a1a1a'; x.fillText("WHAT'S YOUR MEMECOIN?",rx,fY);
-  x.font="26px Bungee"; x.fillStyle='#F7931A'; x.fillText("📦 box.fun",rx,fY+38);
+  // CTA — sits just under the quote (logo above provides the box.fun branding)
+  const fY=qbY+qbH+68;
+  x.font="30px Bungee"; x.fillStyle='#1a1a1a'; x.fillText("WHAT'S YOUR MEMECOIN?",rx,fY);
 
   cv.toBlob(b=>{
     const a=document.createElement('a');
