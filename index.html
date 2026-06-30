@@ -263,7 +263,7 @@
         <div class="vs">VS</div>
         <div class="slot" id="slotB"></div>
       </div>
-      <p class="pick-hint">👇 TAP THE ONE THAT'S MORE <b>YOU</b> 👇</p>
+      <p class="pick-hint">👉 TAP THE ONE THAT'S MORE <b>YOU</b> 👉</p>
     </div>
   </section>
 
@@ -369,7 +369,7 @@ function buildStartBoxes(){
   picks.forEach((c,i)=>{
     const d=document.createElement('div');
     d.className='card';
-    d.style.width='150px';
+    d.style.width='200px';
     d.style.transform=`rotate(${i%2?2:-2}deg)`;
     d.style.cursor='default';
     d.innerHTML=cardInner(c);
@@ -470,89 +470,86 @@ function loadImg(src){
 async function exportCard(){
   const w=window.__winner; if(!w) return;
   await (document.fonts?document.fonts.ready:Promise.resolve());
-  const W=820,H=1060, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const W=1200,H=675, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
   const x=cv.getContext('2d');
   const accent=colorFor(w.name);
 
-  // bg + header band
+  // background + frame
   x.fillStyle='#2BB2E8'; x.fillRect(0,0,W,H);
-  x.fillStyle='#FFD400'; x.fillRect(0,0,W,96);
-  x.lineWidth=6; x.strokeStyle='#1a1a1a';
-  x.beginPath(); x.moveTo(0,96); x.lineTo(W,96); x.stroke();
+  x.lineWidth=10; x.strokeStyle='#1a1a1a'; x.strokeRect(6,6,W-12,H-12);
 
-  // logo (logo.png if present, else text)
-  const logo=await loadImg('logo.png') || await loadImg('logo.svg');
-  if(logo){
-    const lh=58, lw=logo.width*(lh/logo.height);
-    x.drawImage(logo,(W-lw)/2,19,lw,lh);
-  }else{
-    x.textAlign='center'; x.font="42px Bungee";
-    x.fillStyle='#2DC44F'; x.fillText("BOX",W/2-95,64);
-    x.fillStyle='#1a1a1a'; x.fillText("-",W/2-28,64);
-    x.fillStyle='#F7931A'; x.fillText("FUN",W/2+52,64);
-  }
-
-  // headline + name
-  x.textAlign='center'; x.fillStyle='#1a1a1a'; x.font="30px Bungee";
-  x.fillText("MY FAVORITE MEMECOIN IS",W/2,150);
-  x.font="84px Bungee";
-  x.fillStyle='#FFD400'; x.fillText(w.name.toUpperCase(),W/2+4,254);
-  x.fillStyle='#1a1a1a'; x.fillText(w.name.toUpperCase(),W/2,250);
-
-  // winner image (box image as-is, or framed PFP, or placeholder)
+  // ===== LEFT: the coin card =====
   const boxImg = await loadImg(w.box);
   const pfpImg = await loadImg(w.img);
-  const cardW=300, cardX=(W-cardW)/2, cardY=290; let cardH=440;
+  const regionH=545, regionY=(H-regionH)/2, regionX=58;
   if(boxImg){
-    cardH = cardW * (boxImg.height/boxImg.width);
-    drawRoundImg(x,boxImg,cardX,cardY,cardW,cardH,14);
+    const cw = regionH * (boxImg.width/boxImg.height);
+    drawRoundImg(x, boxImg, regionX, regionY, cw, regionH, 16);
   }else{
-    cardH=460;
+    const cw=345, ch=520, fx=regionX, fy=(H-ch)/2;
     x.fillStyle='#fff'; x.strokeStyle='#1a1a1a'; x.lineWidth=6;
-    roundRect(x,cardX,cardY,cardW,cardH,12); x.fill(); x.stroke();
-    x.fillStyle=accent; x.fillRect(cardX,cardY,cardW,46); x.strokeRect(cardX,cardY,cardW,46);
-    x.fillStyle='#1a1a1a'; x.font="16px Bungee"; x.textAlign='left';
-    x.fillText("LIMITED EDITION",cardX+12,cardY+30);
-    const iy=cardY+46, ih=300;
+    roundRect(x,fx,fy,cw,ch,12); x.fill(); x.stroke();
+    x.fillStyle=accent; x.fillRect(fx,fy,cw,44); x.strokeRect(fx,fy,cw,44);
+    x.fillStyle='#1a1a1a'; x.font="14px Bungee"; x.textAlign='left';
+    x.fillText("LIMITED EDITION",fx+10,fy+28);
+    const iy=fy+44, ih=320;
     if(pfpImg){
-      x.save(); x.beginPath(); x.rect(cardX,iy,cardW,ih); x.clip();
-      const r=Math.min(cardW/pfpImg.width,ih/pfpImg.height), dw=pfpImg.width*r, dh=pfpImg.height*r;
-      x.drawImage(pfpImg,cardX+(cardW-dw)/2,iy+(ih-dh)/2,dw,dh); x.restore();
+      x.save(); x.beginPath(); x.rect(fx,iy,cw,ih); x.clip();
+      const r=Math.min(cw/pfpImg.width,ih/pfpImg.height), dw=pfpImg.width*r, dh=pfpImg.height*r;
+      x.drawImage(pfpImg,fx+(cw-dw)/2,iy+(ih-dh)/2,dw,dh); x.restore();
     }else{
-      x.fillStyle=accent; x.fillRect(cardX,iy,cardW,ih);
-      x.textAlign='center'; x.fillStyle='#fff'; x.font="40px Bungee";
-      x.fillText(w.name.toUpperCase(),cardX+cardW/2,iy+ih/2+12);
+      x.fillStyle=accent; x.fillRect(fx,iy,cw,ih);
+      x.textAlign='center'; x.fillStyle='#fff'; x.font="38px Bungee";
+      x.fillText(w.name.toUpperCase(),fx+cw/2,iy+ih/2+12);
     }
-    x.strokeStyle='#1a1a1a'; x.strokeRect(cardX,iy,cardW,ih);
+    x.strokeStyle='#1a1a1a'; x.strokeRect(fx,iy,cw,ih);
     x.textAlign='center'; x.fillStyle='#1a1a1a';
-    x.font="13px Bungee"; x.fillText("★ CERTIFIED HODL ★",cardX+cardW/2,iy+ih+34);
-    x.font="28px Bungee"; x.fillText(w.name,cardX+cardW/2,iy+ih+70);
-    x.font="16px 'Helvetica Neue',Arial"; x.fillText("$"+w.ticker,cardX+cardW/2,iy+ih+96);
+    x.font="12px Bungee"; x.fillText("★ CERTIFIED HODL ★",fx+cw/2,iy+ih+30);
+    x.font="26px Bungee"; x.fillText(w.name,fx+cw/2,iy+ih+62);
+    x.font="14px 'Helvetica Neue',Arial"; x.fillText("$"+w.ticker,fx+cw/2,iy+ih+86);
   }
 
-  // persona quote box — sized to the wrapped text
-  x.font="22px 'Helvetica Neue',Arial";
-  const maxLineW=560, padX=28, padY=22, lh2=30;
+  // ===== RIGHT: text column =====
+  const rx=560, rw=W-rx-58;   // right column left edge + width
+  // logo
+  const logo=await loadImg('logo.png') || await loadImg('logo.svg');
+  if(logo){
+    const lh=52, lw=logo.width*(lh/logo.height);
+    x.drawImage(logo,rx,66,lw,lh);
+  }else{
+    x.textAlign='left'; x.font="42px Bungee";
+    x.fillStyle='#2DC44F'; x.fillText("BOX-",rx,108);
+    x.fillStyle='#F7931A'; x.fillText("FUN",rx+118,108);
+  }
+  // headline
+  x.textAlign='left'; x.fillStyle='#1a1a1a'; x.font="26px Bungee";
+  x.fillText("MY FAVORITE MEMECOIN IS",rx,190);
+  // name — auto-sized to fit the column
+  const NAME=w.name.toUpperCase(); let ns=94; x.font=ns+"px Bungee";
+  while(x.measureText(NAME).width>rw && ns>40){ ns-=4; x.font=ns+"px Bungee"; }
+  const nameY=190+ns+14;
+  x.fillStyle='#FFD400'; x.fillText(NAME,rx+5,nameY+5);
+  x.fillStyle='#1a1a1a'; x.fillText(NAME,rx,nameY);
+  // persona quote box
+  x.font="21px 'Helvetica Neue',Arial";
   const quote='“'+w.persona+'”';
-  const lines=wrapLines(x,quote,maxLineW);
-  let textW=0; lines.forEach(l=>textW=Math.max(textW,x.measureText(l).width));
-  const boxW=Math.min(textW+padX*2, maxLineW+padX*2);
-  const boxH=lines.length*lh2+padY*2;
-  const boxX=(W-boxW)/2, boxY=cardY+cardH+30;
-  x.fillStyle='#FBF6DF'; x.strokeStyle='#1a1a1a'; x.lineWidth=5;
-  roundRect(x,boxX,boxY,boxW,boxH,12); x.fill(); x.stroke();
-  x.fillStyle='#1a1a1a'; x.textAlign='center';
-  lines.forEach((l,i)=>x.fillText(l,W/2,boxY+padY+lh2*0.7+i*lh2));
-
+  const padX=22,padY=18,lh2=28;
+  const lines=wrapLines(x,quote,rw-padX*2);
+  let tw=0; lines.forEach(l=>tw=Math.max(tw,x.measureText(l).width));
+  const qbW=Math.min(tw+padX*2,rw), qbH=lines.length*lh2+padY*2, qbX=rx, qbY=nameY+34;
+  x.fillStyle='#FBF6DF'; x.strokeStyle='#1a1a1a'; x.lineWidth=4;
+  roundRect(x,qbX,qbY,qbW,qbH,10); x.fill(); x.stroke();
+  x.fillStyle='#1a1a1a'; x.textAlign='left';
+  lines.forEach((l,i)=>x.fillText(l,qbX+padX,qbY+padY+lh2*0.7+i*lh2));
   // footer CTA
-  const fy=boxY+boxH+54;
-  x.font="26px Bungee"; x.fillStyle='#1a1a1a'; x.fillText("WHAT'S YOUR MEMECOIN?",W/2,fy);
-  x.font="24px Bungee"; x.fillStyle='#F7931A'; x.fillText("📦 box.fun",W/2,fy+34);
+  const fY=H-92;
+  x.font="28px Bungee"; x.fillStyle='#1a1a1a'; x.fillText("WHAT'S YOUR MEMECOIN?",rx,fY);
+  x.font="26px Bungee"; x.fillStyle='#F7931A'; x.fillText("📦 box.fun",rx,fY+38);
 
   cv.toBlob(b=>{
     const a=document.createElement('a');
     a.href=URL.createObjectURL(b);
-    a.download="i-am-"+w.name.toLowerCase().replace(/\s+/g,'-')+".png";
+    a.download="box-fun-"+w.name.toLowerCase().replace(/\s+/g,'-')+".png";
     a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   });
 }
