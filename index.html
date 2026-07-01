@@ -467,91 +467,141 @@ function loadImg(src){
     im.onload=()=>res(im); im.onerror=()=>res(null); im.src=encodeURI(src);
   });
 }
+const MEME_TYPES=[
+  {v:"OG",            d:"THE ORIGINAL. THE LEGEND.", e:"🐸"},
+  {v:"DEGEN",         d:"APE FIRST, ASK LATER.",     e:"🦍"},
+  {v:"VISIONARY",     d:"EARLY. ALWAYS EARLY.",      e:"🔮"},
+  {v:"WILDCARD",      d:"NOBODY SAW IT COMING.",     e:"🃏"},
+  {v:"TASTEMAKER",    d:"SETS THE TREND.",           e:"🎨"},
+  {v:"TRUE BELIEVER", d:"CONVICTION MAXED OUT.",     e:"🙏"},
+  {v:"CHAOS GREMLIN", d:"HERE FOR THE BIT.",         e:"😈"},
+  {v:"DIAMOND HANDS", d:"NEVER SELLING. EVER.",      e:"💎"},
+];
+const RANKS=[
+  {v:"MEME EXPERT",       d:"YOU KNOW WHAT'S UP.",   e:"⭐"},
+  {v:"CERTIFIED HODLER",  d:"NEVER LETTING GO.",     e:"💎"},
+  {v:"CULTURE COLLECTOR", d:"ALL FOR THE CULTURE.",  e:"🎭"},
+  {v:"BOX ENJOYER",       d:"SIMPLE PLEASURES.",     e:"📦"},
+  {v:"RARE TRAIT HUNTER", d:"ALWAYS DIGGING DEEP.",  e:"🔍"},
+  {v:"MEME CURATOR",      d:"IMPECCABLE TASTE.",     e:"🖼️"},
+  {v:"CHRONICALLY BOXED", d:"TERMINALLY ONLINE.",    e:"🔁"},
+  {v:"GOLD SEEKER",       d:"CHASING THE 1-IN-100.", e:"🏆"},
+  {v:"CT ARCHAEOLOGIST",  d:"DEEP IN THE TIMELINE.", e:"🏺"},
+  {v:"CERTIFIED DEGEN",   d:"RISK IS THE POINT.",    e:"🎲"},
+];
+const rndPick=a=>a[Math.random()*a.length|0];
+
 async function exportCard(){
   const w=window.__winner; if(!w) return;
   await (document.fonts?document.fonts.ready:Promise.resolve());
-  const W=1200,H=675, SCALE=2, cv=document.createElement('canvas');
+  const W=1200,H=910, SCALE=2, cv=document.createElement('canvas');
   cv.width=W*SCALE; cv.height=H*SCALE;
   const x=cv.getContext('2d'); x.scale(SCALE,SCALE);
   x.imageSmoothingEnabled=true; x.imageSmoothingQuality='high';
-  const accent=colorFor(w.name);
+  const INK='#1a1a1a', CREAM='#FBF6DF', YEL='#FFD400', GRN='#2DC44F', BLU='#1f7fd1';
+  const memeType=rndPick(MEME_TYPES), rank=rndPick(RANKS);
 
-  // background + frame
+  // ---- background + rounded frame ----
   x.fillStyle='#2BB2E8'; x.fillRect(0,0,W,H);
-  x.lineWidth=10; x.strokeStyle='#1a1a1a'; x.strokeRect(6,6,W-12,H-12);
+  x.lineJoin='round'; x.lineWidth=14; x.strokeStyle=INK;
+  roundRect(x,9,9,W-18,H-18,26); x.stroke();
 
-  // ===== LEFT: the coin card =====
-  const boxImg = await loadImg(w.box);
-  const pfpImg = await loadImg(w.img);
-  const regionH=545, regionY=(H-regionH)/2, regionX=58;
-  if(boxImg){
-    const cw = regionH * (boxImg.width/boxImg.height);
-    drawRoundImg(x, boxImg, regionX, regionY, cw, regionH, 16);
-  }else{
-    const cw=345, ch=520, fx=regionX, fy=(H-ch)/2;
-    x.fillStyle='#fff'; x.strokeStyle='#1a1a1a'; x.lineWidth=6;
-    roundRect(x,fx,fy,cw,ch,12); x.fill(); x.stroke();
-    x.fillStyle=accent; x.fillRect(fx,fy,cw,44); x.strokeRect(fx,fy,cw,44);
-    x.fillStyle='#1a1a1a'; x.font="14px Bungee"; x.textAlign='left';
-    x.fillText("LIMITED EDITION",fx+10,fy+28);
-    const iy=fy+44, ih=320;
-    if(pfpImg){
-      x.save(); x.beginPath(); x.rect(fx,iy,cw,ih); x.clip();
-      const r=Math.min(cw/pfpImg.width,ih/pfpImg.height), dw=pfpImg.width*r, dh=pfpImg.height*r;
-      x.drawImage(pfpImg,fx+(cw-dw)/2,iy+(ih-dh)/2,dw,dh); x.restore();
-    }else{
-      x.fillStyle=accent; x.fillRect(fx,iy,cw,ih);
-      x.textAlign='center'; x.fillStyle='#fff'; x.font="38px Bungee";
-      x.fillText(w.name.toUpperCase(),fx+cw/2,iy+ih/2+12);
-    }
-    x.strokeStyle='#1a1a1a'; x.strokeRect(fx,iy,cw,ih);
-    x.textAlign='center'; x.fillStyle='#1a1a1a';
-    x.font="12px Bungee"; x.fillText("★ CERTIFIED HODL ★",fx+cw/2,iy+ih+30);
-    x.font="26px Bungee"; x.fillText(w.name,fx+cw/2,iy+ih+62);
-    x.font="14px 'Helvetica Neue',Arial"; x.fillText("$"+w.ticker,fx+cw/2,iy+ih+86);
+  const PAD=34;
+  // comic side-rays helper
+  function rays(cx,cy,dir,col){
+    x.strokeStyle=col; x.lineWidth=5; x.lineCap='round';
+    [[-15,18],[2,26],[19,18]].forEach(([dy,len])=>{ x.beginPath(); x.moveTo(cx+dir*8,cy+dy); x.lineTo(cx+dir*(8+len),cy+dy); x.stroke(); });
   }
 
-  // ===== RIGHT: text column =====
-  const rx=560, rw=W-rx-58;   // right column left edge + width
-  // logo
-  const logo=await loadImg('logo.png') || await loadImg('logo.svg');
+  // ===================== LEFT: certificate =====================
+  const lx=PAD, ly=PAD, lw=520, lh=600;
+  x.fillStyle=CREAM; x.strokeStyle=INK; x.lineWidth=6;
+  roundRect(x,lx,ly,lw,lh,18); x.fill(); x.stroke();
+  const hx=lx+18, hy=ly+18, hw=lw-36, hh=50;
+  x.fillStyle=YEL; x.strokeStyle=INK; x.lineWidth=4;
+  roundRect(x,hx,hy,hw,hh,10); x.fill(); x.stroke();
+  x.fillStyle=INK; x.textAlign='center'; x.font="20px Bungee";
+  x.fillText("★ BOX-FUN CERTIFICATE ★",hx+hw/2,hy+33);
+  const coinImg=await loadImg(w.img);
+  const iax=lx+22, iay=hy+hh+16, iaw=lw-44, iah=ly+lh-16-(hy+hh+16);
+  if(coinImg){
+    const r=Math.min(iaw/coinImg.width, iah/coinImg.height), dw=coinImg.width*r, dh=coinImg.height*r;
+    x.drawImage(coinImg, iax+(iaw-dw)/2, iay+(iah-dh)/2, dw, dh);
+  }
+
+  // ===================== RIGHT: hero =====================
+  const rx=lx+lw+26, rW=W-rx-PAD, rcx=rx+rW/2;
+  const logo=await loadImg('logo.png')||await loadImg('logo.svg');
+  let logoBottom=110;
   if(logo){
-    const lh=72, lw=logo.width*(lh/logo.height);
-    x.drawImage(logo,rx,56,lw,lh);
-  }else{
-    x.textAlign='left'; x.font="42px Bungee";
-    x.fillStyle='#2DC44F'; x.fillText("BOX-",rx,108);
-    x.fillStyle='#F7931A'; x.fillText("FUN",rx+118,108);
+    const lhh=68, lww=logo.width*(lhh/logo.height);
+    x.drawImage(logo, rcx-lww/2, 42, lww, lhh);
+    rays(rcx-lww/2-4, 42+lhh/2, -1, INK); rays(rcx+lww/2+4, 42+lhh/2, 1, INK);
+    logoBottom=42+lhh;
   }
-  // headline
-  x.textAlign='left'; x.fillStyle='#1a1a1a'; x.font="26px Bungee";
-  x.fillText("MY FAVORITE MEMECOIN IS",rx,190);
-  // name — auto-sized to fit the column
-  const NAME=w.name.toUpperCase(); let ns=94; x.font=ns+"px Bungee";
-  while(x.measureText(NAME).width>rw && ns>40){ ns-=4; x.font=ns+"px Bungee"; }
-  const nameY=190+ns+14;
-  x.fillStyle='#FFD400'; x.fillText(NAME,rx+5,nameY+5);
-  x.fillStyle='#1a1a1a'; x.fillText(NAME,rx,nameY);
-  // persona quote box
-  x.font="21px 'Helvetica Neue',Arial";
-  const quote='“'+w.persona+'”';
-  const padX=22,padY=18,lh2=28;
-  const lines=wrapLines(x,quote,rw-padX*2);
-  let tw=0; lines.forEach(l=>tw=Math.max(tw,x.measureText(l).width));
-  const qbW=Math.min(tw+padX*2,rw), qbH=lines.length*lh2+padY*2, qbX=rx, qbY=nameY+34;
-  x.fillStyle='#FBF6DF'; x.strokeStyle='#1a1a1a'; x.lineWidth=4;
-  roundRect(x,qbX,qbY,qbW,qbH,10); x.fill(); x.stroke();
-  x.fillStyle='#1a1a1a'; x.textAlign='left';
-  lines.forEach((l,i)=>x.fillText(l,qbX+padX,qbY+padY+lh2*0.7+i*lh2));
-  // CTA — sits just under the quote (logo above provides the box.fun branding)
-  const fY=qbY+qbH+68;
-  x.font="30px Bungee"; x.fillStyle='#1a1a1a'; x.fillText("WHAT'S YOUR MEMECOIN?",rx,fY);
+  // I CHOSE pill
+  x.font="24px Bungee"; const pw=x.measureText("I CHOSE").width+50, ph=44, pyy=logoBottom+16;
+  x.fillStyle=INK; roundRect(x,rcx-pw/2,pyy,pw,ph,22); x.fill();
+  x.fillStyle='#fff'; x.textAlign='center'; x.fillText("I CHOSE",rcx,pyy+30);
+  // NAME big yellow outlined
+  const NAME=w.name.toUpperCase(); let ns=90; x.font=ns+"px Bungee";
+  while(x.measureText(NAME).width>rW-24 && ns>34){ ns-=3; x.font=ns+"px Bungee"; }
+  const nameY=pyy+ph+ns+4;
+  x.textAlign='center'; x.lineJoin='round';
+  x.lineWidth=Math.max(6,ns*0.11); x.strokeStyle=INK; x.strokeText(NAME,rcx,nameY);
+  x.fillStyle=YEL; x.fillText(NAME,rcx,nameY);
+  const nameW=x.measureText(NAME).width;
+  rays(rcx-nameW/2-14, nameY-ns*0.34, -1, YEL); rays(rcx+nameW/2+14, nameY-ns*0.34, 1, YEL);
+  // quote box
+  x.font="22px 'Helvetica Neue',Arial";
+  const quote='“'+w.persona+'”', qpadX=24, qpadY=20, qlh=30;
+  const qlines=wrapLines(x,quote,rW-qpadX*2);
+  const qbH=qlines.length*qlh+qpadY*2, qbY=nameY+24;
+  x.fillStyle=CREAM; x.strokeStyle=INK; x.lineWidth=5;
+  roundRect(x,rx,qbY,rW,qbH,14); x.fill(); x.stroke();
+  x.fillStyle=INK; x.textAlign='left';
+  qlines.forEach((l,i)=>x.fillText(l,rx+qpadX,qbY+qpadY+qlh*0.72+i*qlh));
+  // thanks for playing
+  const tY=qbY+qbH+54;
+  x.textAlign='center'; x.font="28px Bungee"; x.fillStyle=INK;
+  x.fillText("⭐ THANKS FOR PLAYING! ⭐",rcx,tY);
+  x.font="18px Bungee"; x.fillText("ANOTHER DAY, ANOTHER MEME.",rcx,tY+30);
+
+  // ===================== BOTTOM: stat bar =====================
+  const sx=PAD, sBarW=W-PAD*2, sy=ly+lh+22, sh=170, colW=sBarW/3;
+  x.fillStyle=CREAM; x.strokeStyle=INK; x.lineWidth=6;
+  roundRect(x,sx,sy,sBarW,sh,18); x.fill(); x.stroke();
+  x.strokeStyle=INK; x.lineWidth=3;
+  for(let i=1;i<3;i++){ x.beginPath(); x.moveTo(sx+colW*i,sy+22); x.lineTo(sx+colW*i,sy+sh-22); x.stroke(); }
+  function statCol(i,label,item,valColor){
+    const cx0=sx+colW*i, bcx=cx0+56, bcy=sy+sh/2-2, br=36;
+    x.beginPath(); x.arc(bcx,bcy,br,0,7); x.fillStyle='#fff'; x.fill();
+    x.lineWidth=6; x.strokeStyle=valColor; x.stroke();
+    x.lineWidth=3; x.strokeStyle=INK; x.beginPath(); x.arc(bcx,bcy,br+3,0,7); x.stroke();
+    x.textAlign='center'; x.font="32px 'Helvetica Neue',Arial"; x.fillStyle=INK; x.fillText(item.e,bcx,bcy+11);
+    const tx=bcx+br+20, vmax=cx0+colW-tx-16;
+    x.textAlign='left'; x.font="14px Bungee"; x.fillStyle=INK; x.fillText(label,tx,sy+42);
+    let vs=30; x.font=vs+"px Bungee";
+    while(x.measureText(item.v).width>vmax && vs>15){ vs-=1; x.font=vs+"px Bungee"; }
+    x.fillStyle=valColor; x.fillText(item.v,tx,sy+80);
+    x.font="13px 'Helvetica Neue',Arial"; x.fillStyle=INK;
+    wrapLines(x,item.d,vmax+12).forEach((l,k)=>x.fillText(l,tx,sy+106+k*16));
+  }
+  statCol(0,"MEME TYPE",memeType,GRN);
+  statCol(1,"COLLECTOR RANK",rank,BLU);
+  statCol(2,"BOX STATUS",{v:"CERTIFIED HODL",d:"YOU BOX IT. YOU HODL IT.",e:"🔒"},GRN);
+
+  // ===================== bottom pill =====================
+  x.font="24px Bungee"; const bf="🌐 BOX.FUN", bw2=x.measureText(bf).width+50, bh2=46, bpx=W/2-bw2/2, bpy=sy+sh+18;
+  x.fillStyle=INK; roundRect(x,bpx,bpy,bw2,bh2,23); x.fill();
+  x.fillStyle='#fff'; x.textAlign='center'; x.fillText(bf,W/2,bpy+31);
+  rays(bpx-6,bpy+bh2/2,-1,INK); rays(bpx+bw2+6,bpy+bh2/2,1,INK);
 
   cv.toBlob(b=>{
     const a=document.createElement('a');
     a.href=URL.createObjectURL(b);
     a.download="box-fun-"+w.name.toLowerCase().replace(/\s+/g,'-')+".png";
-    a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1500);
   });
 }
 function roundRect(c,x,y,w,h,r){
